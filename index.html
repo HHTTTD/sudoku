@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sudoku</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <div class="hdr">
+      <div class="hdr-left">
+        <h2>Sudoku</h2>
+        <p>กรอก 1–9 ให้ครบทุกแถว คอลัมน์ กล่อง</p>
+      </div>
+      <div class="timer-wrap">
+        <div class="timer-val" id="timer">00:00</div>
+        <div class="timer-lbl">เวลา</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <button class="pill active" onclick="setDiff('easy')">ง่าย</button>
+      <button class="pill" onclick="setDiff('medium')">กลาง</button>
+      <button class="pill" onclick="setDiff('hard')">ยาก</button>
+      <div class="tb-right">
+        <button class="icon-btn" id="pause-btn" onclick="togglePause()">
+          <i class="ti ti-player-pause" aria-hidden="true"></i>
+          <span id="pause-lbl">หยุด</span>
+        </button>
+        <button class="icon-btn" onclick="newGame()" aria-label="เกมใหม่">
+          <i class="ti ti-refresh" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span class="status-lbl">ชีวิต</span>
+      <div class="hearts" id="hearts"></div>
+      <span class="mode-badge" id="mode-badge">กรอกตัวเลข</span>
+    </div>
+
+    <div class="progress-row">
+      <div class="progress-bg">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+      <span class="progress-lbl" id="prog-lbl">0 / 81</span>
+    </div>
+
+    <div class="board-outer">
+      <div class="board-grid" id="board"></div>
+      <div class="pause-overlay hidden" id="overlay">
+        <i class="ti ti-player-pause" aria-hidden="true"></i>
+        <p>กด "ดำเนินต่อ" เพื่อเล่นต่อ</p>
+      </div>
+    </div>
+
+    <div class="numpad" id="numpad"></div>
+
+    <div class="action-row">
+      <button class="act-btn" id="note-btn" onclick="toggleNote()">
+        <i class="ti ti-pencil" aria-hidden="true"></i>โน้ต
+      </button>
+      <button class="act-btn" onclick="doUndo()">
+        <i class="ti ti-arrow-back-up" aria-hidden="true"></i>ย้อนกลับ
+      </button>
+      <button class="act-btn" onclick="doErase()">
+        <i class="ti ti-eraser" aria-hidden="true"></i>ลบ
+      </button>
+      <button class="act-btn" onclick="doHint()">
+        <i class="ti ti-bulb" aria-hidden="true"></i>คำใบ้ <span id="hint-ct">(3)</span>
+      </button>
+    </div>
+
+    <div class="footer-msg" id="footer"></div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
