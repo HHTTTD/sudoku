@@ -67,7 +67,86 @@ function fmtTime(totalSecs) {
   return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
 }
 
-// ── New game ─────────────────────────────────────────────────────────────────
+// ── End-game modal ────────────────────────────────────────────────────────────
+function showEndModal(type) {
+  // Remove any existing modal
+  const existing = document.getElementById('endgame-modal');
+  if (existing) existing.remove();
+
+  const hintsUsed = 3 - hints;
+  const timeStr = fmtTime(secs);
+  const filled = grid.filter((v, i) => v !== 0).length;
+  const pct = Math.round(filled / 81 * 100);
+
+  // Stars for win (based on mistakes)
+  let stars = '';
+  if (type === 'win') {
+    const starCount = mistakes === 0 ? 3 : mistakes <= 2 ? 2 : 1;
+    stars = '⭐'.repeat(starCount) + '✩'.repeat(3 - starCount);
+  }
+
+  const isWin = type === 'win';
+
+  const backdrop = document.createElement('div');
+  backdrop.className = 'endgame-backdrop';
+  backdrop.id = 'endgame-modal';
+
+  backdrop.innerHTML = `
+    <div class="endgame-card">
+      <div class="endgame-top">
+        <div class="endgame-icon-wrap ${isWin ? 'win' : 'lose'}">
+          <i class="ti ${isWin ? 'ti-trophy' : 'ti-heart-off'}" aria-hidden="true"></i>
+        </div>
+        ${isWin ? `<div class="endgame-stars">${stars}</div>` : '<div class="endgame-stars"></div>'}
+        <p class="endgame-title ${isWin ? 'win' : 'lose'}">${isWin ? 'สำเร็จแล้ว! 🎉' : 'หมดชีวิต!'}</p>
+        <p class="endgame-sub">${isWin ? 'ยอดเยี่ยม! แก้โจทย์ได้เรียบร้อย' : 'ผิดพลาดเกินไป — ลองอีกครั้งนะ'}</p>
+        <div class="endgame-stats">
+          <div class="endgame-stat">
+            <div class="endgame-stat-val">${timeStr}</div>
+            <div class="endgame-stat-lbl">เวลา</div>
+          </div>
+          <div class="endgame-stat">
+            <div class="endgame-stat-val">${mistakes}</div>
+            <div class="endgame-stat-lbl">ผิดพลาด</div>
+          </div>
+          <div class="endgame-stat">
+            ${isWin
+              ? `<div class="endgame-stat-val">${hintsUsed}</div><div class="endgame-stat-lbl">คำใบ้ใช้</div>`
+              : `<div class="endgame-stat-val">${pct}%</div><div class="endgame-stat-lbl">กรอกแล้ว</div>`
+            }
+          </div>
+        </div>
+        <button class="endgame-main-btn ${isWin ? 'win' : 'lose'}" onclick="document.getElementById('endgame-modal').remove(); newGame();">
+          <i class="ti ti-refresh" aria-hidden="true"></i>
+          ${isWin ? 'เล่นอีกครั้ง' : 'ลองอีกครั้ง'}
+        </button>
+      </div>
+      <hr class="endgame-divider">
+      <div class="endgame-bottom">
+        ${isWin
+          ? `<button class="endgame-sec-btn" onclick="document.getElementById('endgame-modal').remove(); setDiff({easy:'medium',medium:'hard',hard:'hard'}[diff]);">
+               <i class="ti ti-arrow-up" aria-hidden="true"></i> ยากขึ้น
+             </button>`
+          : `<button class="endgame-sec-btn" onclick="document.getElementById('endgame-modal').remove(); revealSolution();">
+               <i class="ti ti-eye" aria-hidden="true"></i> ดูเฉลย
+             </button>`
+        }
+        <button class="endgame-sec-btn" onclick="document.getElementById('endgame-modal').remove(); setDiff(diff);">
+          <i class="ti ti-layout-grid" aria-hidden="true"></i> ระดับเดิม
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(backdrop);
+}
+
+function revealSolution() {
+  for (let i = 0; i < 81; i++) grid[i] = sol[i];
+  renderAll();
+}
+
+
 function newGame() {
   clearInterval(tInt);
   secs = 0; mistakes = 0; won = false; paused = false;
@@ -256,15 +335,17 @@ function enterNum(n) {
   if (mistakes >= MAX_ERR) {
     won = true;
     clearInterval(tInt);
-    document.getElementById('footer').innerHTML = '<span class="dead-msg">💀 หมดชีวิต! กด ↻ เพื่อเล่นใหม่</span>';
     renderAll();
+    setTimeout(() => showEndModal('lose'), 400);
     return;
   }
 
   if (grid.every((v, i) => v === sol[i])) {
     won = true;
     clearInterval(tInt);
-    document.getElementById('footer').innerHTML = '<span class="win-msg">🎉 เยี่ยมมาก! ทำสำเร็จแล้ว!</span>';
+    renderAll();
+    setTimeout(() => showEndModal('win'), 500);
+    return;
   }
 
   renderAll();
