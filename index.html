@@ -6,7 +6,7 @@
   <title>Sudoku</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -24,15 +24,16 @@
     </div>
 
     <div class="toolbar">
-      <button class="pill active" onclick="setDiff('easy')">ง่าย</button>
-      <button class="pill" onclick="setDiff('medium')">กลาง</button>
-      <button class="pill" onclick="setDiff('hard')">ยาก</button>
+      <!-- FIX: data-diff ทำให้ setDiff ไม่ต้องเทียบข้อความภาษาไทย -->
+      <button class="pill active" data-diff="easy"   onclick="setDiff('easy')">ง่าย</button>
+      <button class="pill"        data-diff="medium" onclick="setDiff('medium')">กลาง</button>
+      <button class="pill"        data-diff="hard"   onclick="setDiff('hard')">ยาก</button>
       <div class="tb-right">
         <button class="icon-btn" id="pause-btn" onclick="togglePause()">
           <i class="ti ti-player-pause" aria-hidden="true"></i>
           <span id="pause-lbl">หยุด</span>
         </button>
-        <button class="icon-btn" onclick="newGame()" aria-label="เกมใหม่">
+        <button class="icon-btn" onclick="newGame()" aria-label="เกมใหม่" title="เกมใหม่">
           <i class="ti ti-refresh" aria-hidden="true"></i>
         </button>
       </div>
@@ -55,7 +56,7 @@
       <div class="board-grid" id="board"></div>
       <div class="pause-overlay hidden" id="overlay">
         <i class="ti ti-player-pause" aria-hidden="true"></i>
-        <p>กด "ดำเนินต่อ" เพื่อเล่นต่อ</p>
+        <p>กดที่นี่ หรือปุ่ม "ดำเนินต่อ" เพื่อเล่นต่อ</p>
       </div>
     </div>
 
@@ -74,6 +75,14 @@
       <button class="act-btn" onclick="doHint()">
         <i class="ti ti-bulb" aria-hidden="true"></i>คำใบ้ <span id="hint-ct">(3)</span>
       </button>
+    </div>
+
+    <div class="kbd-hint">
+      <span><kbd>1</kbd>–<kbd>9</kbd> กรอก</span>
+      <span><kbd>N</kbd> โน้ต</span>
+      <span><kbd>H</kbd> คำใบ้</span>
+      <span><kbd>Space</kbd> หยุด</span>
+      <span><kbd>⌫</kbd> ลบ</span>
     </div>
 
     <div class="footer-msg" id="footer"></div>
